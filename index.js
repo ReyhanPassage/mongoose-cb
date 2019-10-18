@@ -15,10 +15,15 @@ mongoose.connect( URL, {
     useUnifiedTopology: true
 })
 
+
 app.use(express.json())
 app.use(userRouter)
 app.use(taskRouter)
 
+
+app.get("/", (req, res)=>{
+    res.send("<h1>API running at :"+port+"</h1>")
+})
 app.listen(port, ()=>{
     console.log('running at port: ' +port)
 })
