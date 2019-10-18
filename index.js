@@ -5,7 +5,7 @@ const userRouter = require('./routers/userRouters')
 const taskRouter = require('./routers/taskRouters')
 
 const app = express()
-const port = procces.env.PORT || 2019 //port heroku atau localhost
+const port = process.env.PORT || 2019 //port heroku atau localhost
 const URL = 'mongodb+srv://reyhan:passage@cluster0-pnizg.gcp.mongodb.net/bdg-mongoose?retryWrites=true&w=majority-mongoose'
 
 mongoose.connect( URL, {
