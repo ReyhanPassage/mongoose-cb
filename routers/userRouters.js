@@ -4,16 +4,18 @@ const User = require('../models/userModel')
 const multer = require('multer')
 const sharp = require('sharp')
 
-
+//restraint file upload dengan multer
 const upload = multer({
     limits: {
         fileSize: 1000000
     },
+
     fileFilter(req, file, cb){
+        //file upload tidak diterima
         if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
             return cb(new Error('Format file harus jpg, jpeg atau png'))
         }
-
+        //file diterima 
         cb(null, true)
     }
 })
@@ -48,14 +50,20 @@ router.get('/users/avatar/:userId', async (req, res)=>{
 })
 
 //create one user
-router.post('/users', (req, res)=>{
+router.post('/users', async (req, res)=>{
 
     const user = new User(req.body)
 
-user.save()
-.then((resp)=>{res.send(resp)})
-.catch((err)=>{res.send (err) })
+    try {
+        await user.save()
+        res.send(user)
 
+    } catch (e) {
+        //
+        res.send({
+            error: e.errors[Object.keys(e.errors)[0]].message})
+        
+    }
 })
 
 //read one user by id
@@ -99,16 +107,20 @@ try {
 })
 
 // update user
-router.patch('/users/:userId', async (req, res)=>{
+router.patch('/users/:userId', upload.single('avatar'), async (req, res)=>{
+    
     let update = Object.keys(req.body)
     let allowedUpdate = ['name', 'email', 'password','age']
-
     let result = updates.every(update => {return allowedUpdates.includes(update)})
 
     // Jika ada field yang akan di edit selain [ 'name', 'email', 'password', 'age' ]
 
     if(!result){
         return res.send({err: "Invalid Request"})
+    }
+    //jika password ga dirubah
+    if(!req.body.password){
+        return 
     }
 
 try {
@@ -123,7 +135,8 @@ try {
         // updates = [ 'name', 'email', 'password', 'age' ]
         // user = {name, email, password, age}
         updates.forEach((val) => { user[val] = req.body[val] })
-
+        let buffer = await sharp(req.file.buffer).resize({width:250}).png().toBuffer()
+        user.avatar = buffer
         /*
             val = 'password'
             user['email'] = req.body['email']
@@ -148,7 +161,7 @@ try {
 
 
 })
-// login user
+// login user belum pake try catch
 router.post('/users/login', (req, res)=>{
 
         User.login(req.body.email, req.body.password)

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -109,6 +110,7 @@ userSchema.statics.login = async (email, password)=>{
     return user // masukan kedalam resp
 }
 
+userSchema.plugin(uniqueValidator, {message: "{PATH} {VALUE} sudah digunakan"})
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
