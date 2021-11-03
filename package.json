@@ -20,6 +20,6 @@
     "nodemon": "^1.19.4",
     "sharp": "^0.23.1",
     "unique": "0.0.1",
-    "validator": "^11.1.0"
+    "validator": "^13.7.0"
   }
 }
